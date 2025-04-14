@@ -1,0 +1,9 @@
+---
+title: "About"
+---
+
+Hey! My name is Bhargavi and I study CS/Math at Mount Holyoke College.
+
+```{r}
+1 + 1
+```
