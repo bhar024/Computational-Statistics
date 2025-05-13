@@ -2,4 +2,3 @@
 title: "STAT244SC"
 ---
 
-Making a quarto website

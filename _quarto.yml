@@ -7,8 +7,9 @@ website:
   navbar:
     left:
       - href: index.qmd
-        text: Home
-      - about.qmd
+        text: STAT244 SC
+      - href: about.qmd
+        text: About Me
       - href: Test.qmd
         text: Test
 
