@@ -7,11 +7,11 @@ website:
   navbar:
     left:
       - href: index.qmd
-        text: STAT244 SC
+        text: Home page
       - href: about.qmd
         text: About Me
-      - href: Test.qmd
-        text: Test
+      - href: test.qmd
+        text: STAT244SC Project
 
 format:
   html:

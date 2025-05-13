@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>test – Computational statistics projects</title>
+<title>STAT244SC Project – Computational statistics projects</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -67,6 +67,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -90,15 +119,15 @@ ul.task-list li input[type="checkbox"] {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="./index.html"> 
-<span class="menu-text">Home</span></a>
+<span class="menu-text">Home page</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./about.html"> 
-<span class="menu-text">About me</span></a>
+<span class="menu-text">About Me</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./Test.qmd"> 
-<span class="menu-text">Test</span></a>
+    <a class="nav-link active" href="./test.html" aria-current="page"> 
+<span class="menu-text">STAT244SC Project</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -111,21 +140,46 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#i.-introduction" id="toc-i.-introduction" class="nav-link active" data-scroll-target="#i.-introduction">I. Introduction</a></li>
+  <li><a href="#ii.-methods" id="toc-ii.-methods" class="nav-link" data-scroll-target="#ii.-methods">II. Methods</a>
+  <ul class="collapse">
+  <li><a href="#cross-validation" id="toc-cross-validation" class="nav-link" data-scroll-target="#cross-validation">1. Cross Validation</a></li>
+  <li><a href="#logistic-regression" id="toc-logistic-regression" class="nav-link" data-scroll-target="#logistic-regression">2. Logistic regression</a></li>
+  <li><a href="#k-means" id="toc-k-means" class="nav-link" data-scroll-target="#k-means">3. K-Means</a></li>
+  </ul></li>
+  <li><a href="#iii.-results" id="toc-iii.-results" class="nav-link" data-scroll-target="#iii.-results">III. Results</a>
+  <ul class="collapse">
+  <li><a href="#cross-validation-1" id="toc-cross-validation-1" class="nav-link" data-scroll-target="#cross-validation-1">1. Cross-Validation</a></li>
+  <li><a href="#logistic-regression-1" id="toc-logistic-regression-1" class="nav-link" data-scroll-target="#logistic-regression-1">2. Logistic Regression</a></li>
+  <li><a href="#k-means-1" id="toc-k-means-1" class="nav-link" data-scroll-target="#k-means-1">3. K-Means</a></li>
+  </ul></li>
+  <li><a href="#appendix" id="toc-appendix" class="nav-link" data-scroll-target="#appendix">Appendix</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">test</h1>
+<h1 class="title">STAT244SC Project</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Bhargavi, Maimoona, Thu </p>
+          </div>
+  </div>
     
   
     
@@ -136,8 +190,311 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="i.-introduction" class="level1">
+<h1>I. Introduction</h1>
+<p>We chose to explore the Breast Cancer Wisconsin (Diagnostic) dataset. The data set has information on the characteristics of various breast masses. The features are calculated from the digitized image of a fine needle aspirate (FNA) of the breast mass. A consecutive series of 569 tumors (212 malignant, 357 benign) provided the data to develop (train) the algorithm. We think the source of our data is reliable as the data was obtained from the University of Wisconsin Hospitals, Madison from Dr.&nbsp;William H. Wolberg.</p>
+<p>The data set has 568 rows and 32 columns. Each row corresponds to a breast mass, while each column refers to a characteristic feature. We are interested in five variables. Four of these are quantitative:\ - <code>perimeter_mean</code>: the mean size of the core tumor (mm)\ - <code>texture_mean</code>: the mean standard deviation of gray-scale values (pixel)\ - <code>smoothness_mean</code>: the local variation in radius lengths (mm)\ - <code>concavity_mean</code>: the mean of severity of concave portions of the contour (mm)\</p>
+<p>The remaining variable is categorical: <code>Diagnosis</code> (M = malignant, B = benign).</p>
+</section>
+<section id="ii.-methods" class="level1">
+<h1>II. Methods</h1>
+<section id="cross-validation" class="level2">
+<h2 class="anchored" data-anchor-id="cross-validation">1. Cross Validation</h2>
+<p>Cross-validation is a class of methods that estimate the test error by rate by holding out a subset of the training observations from the fitting process, and then applying the statistical learning method to those held out observations.</p>
+<p><span class="math display">\[\text{CV}_{(k)} = \frac{1}{k} \sum_{j=1}^k \text{MAE}_j\]</span></p>
+<p>The goal of cross-validation is to test the model’s ability to predict new data that was not used in estimating it, in order to flag problems like overfitting or selection bias and to give insight into how the model will generalize to an independent data set. Overﬁtting occurs when a model reads too much into chance features and essentially memorizes features of the data used to build it, thus reducing reliability and the ability to generalize to underrepresented populations. Cross-validation helps prevent this by providing a more reliable estimate of how well a model would generalize to unseen data.</p>
+<p>We utilized a linear regression model to build and evaluate a predictive model of breast mass perimeter by concavity.</p>
+<p>We incorporated 1 predictor, 2 predictors, and then 10 predictors to our model of breast mass perimeter:</p>
+<p><span class="math display">\[\mathbb{E}(perimeter\_mean| concavity\_mean) = β_0+ β_1(concavity\_mean)\]</span> <span class="math display">\[\mathbb{E}(perimeter\_mean| concavity\_mean) = β_0+ β_1(concavity\_mean) + β_2(concavity\_mean)^2\]</span></p>
+<p><span class="math display">\[\begin{align*}
+\mathbb{E}(perimeter\_mean| concavity\_mean) = \beta_0+ \beta_1(concavity\_mean) + \beta_2(concavity\_mean)^2 + ... +\\ \beta_{10}(concavity\_mean)^{10}
+\end{align*}\]</span></p>
+<p>The visualizations in Figures 10, 11, and 12 demonstrate that the more predictors are added, the more the models become overfit to the noise in our data. The model then loses its ability to generalize to new data.</p>
+<p>We have trained and tested our data by creating an 80-20 train-test split. This ensures that there is a substantial amount of training data in order to evaluate a decently sized testing set.</p>
+<p>We are implementing 10-fold, 8-fold, 5-fold and Leave One Out Cross-Validation. Each “held-out” fold is our test set. We are using Mean Absolute Error (MAE) as our error metric:</p>
+<p><span class="math display">\[ \text{MAE} = \frac{1}{n} \sum_{i=1}^{n} \left| y_i - \hat{y}_i \right|\]</span></p>
+<p>We are implementing cross-validation techniques to the following 2 models:</p>
+<p><span class="math display">\[\begin{align*}
+\mathbb{E}(perimeter\_mean | texture\_mean, concavity\_mean, smoothness\_mean) = \\
+\beta_0+ \beta_1 (texture\_mean) +\beta_2(concavity\_mean) + \beta_3(smoothness\_mean)
+\end{align*}\]</span></p>
+<p><span class="math display">\[\mathbb{E}(perimeter\_mean| texture\_mean, concavity\_mean) = \beta_0+ \beta_1 (texture\_mean) + \beta_2(concavity\_mean)\]</span></p>
+</section>
+<section id="logistic-regression" class="level2">
+<h2 class="anchored" data-anchor-id="logistic-regression">2. Logistic regression</h2>
+<p>Logistics regression is modeling method that allows us to adjust the linear regression model to account for binary categorical response variables by mapping probabilities between 0 and 1 to the real number range via ideas of logs and odds.</p>
+<p><br>
+The formula for a sample logistics regression model with <span class="math inline">\(n\)</span> predictors is</p>
+<p><span class="math display">\[
+log(odds(Y | X_1, X_2, ..., X_n)) = \beta_0 + \beta_1X_1 + \beta_2X_2 + ... + \beta_nX_n,  
+\]</span></p>
+<p>where Y represents the response variable with a binary outcome, and each <span class="math inline">\(X_i\)</span> represents a quantitative explanatory variable.</p>
+<p>In the context of our 4 variables of interest, our model evaluates to</p>
+<p><span class="math display">\[
+log(odds(Diagnosis | X_1, X_2, X_3, X_4) = \beta_0 + \beta_1X_1 + \beta_2X_2  + \beta_3X_3, \beta_4X_4
+\]</span></p>
+<p>where</p>
+<ul>
+<li><span class="math inline">\(X_1 =\)</span> perimeter_mean (mm)</li>
+<li><span class="math inline">\(X_2 =\)</span> texture_mean (pixel)</li>
+<li><span class="math inline">\(X_3 =\)</span> smoothness_mean (mm)</li>
+<li><span class="math inline">\(X_4 =\)</span> concavity_mean (mm)</li>
+<li><span class="math inline">\(Diagnosis\)</span> (1 - malignant, 0 - benign)</li>
+</ul>
+<p>Because we are applying transformations on top of a regular linear regression model, there are adjustments to how we interpret the coefficients. Since this process is similar across all explanatory variables, we will only mathematically derive the interpretation for one of them for brevity.</p>
+<p>Let fix the value of a tumor’s <span class="math inline">\(X_1, X_2, X_3, X_4\)</span> be some constants <span class="math inline">\(a, b,c, d\)</span> respectively, then our model is as follows:</p>
+<p><span class="math display">\[(eq1): log(odds(Diagnosis| X_1 = a, X_2 = b, X_3 = c, X_4 = d)) = \]</span> <span class="math display">\[\beta_0 + \beta_1a + \beta_2b + \beta_3c + \beta_4d \]</span></p>
+<p>If we increase the value of <span class="math inline">\(X_1\)</span> by 1, but keep all the other values the same, we would have equation 2 like so:</p>
+<p><span class="math display">\[(eq2): log(odds(Diagnosis| X_1 = a+1, X_2 = b, X_3 = c, X_4 = d)) = \]</span> <span class="math display">\[\beta_0 + \beta_1(a+1) + \beta_2b + \beta_3c + \beta_4d \]</span></p>
+<p>If we subtract eq1 from eq2, we would have <span class="math display">\[log(odds(Diagnosis| X_1 = a+1, X_2 = b, X_3 = c, X_4 = d)) - \]</span> <span class="math display">\[log(odds(Diagnosis| X_1 = a, X_2 = b, X_3 = c, X_4 = d)) = \]</span></p>
+<p><span class="math display">\[(\beta_0 + \beta_1(a+1) + \beta_2b + \beta_3c + \beta_4d) - (\beta_0 + \beta_1a + \beta_2b + \beta_3c + \beta_4d) \]</span></p>
+<p>This is equivalent to saying</p>
+<p><span class="math inline">\(log \left( \frac{\operatorname{odds}(\text{Diagnosis} \mid X_1 = a+1, X_2 = b, X_3 = c, X_4 = d)}{\operatorname{odds}(\text{Diagnosis} \mid X_1 = a, X_2 = b, X_3 = c, X_4 = d)} \right) = \beta_1\)</span></p>
+<p>Exponentiating both sides gives:</p>
+<p><span class="math display">\[ \frac{odds(Diagnosis| X_1 = a+1, X_2 = b, X_3 = c, X_4 = d)}{odds(Diagnosis| X_1 = a, X_2 = b, X_3 = c, X_4 = d)}= e^{\beta_1} \]</span> We can rearrange this to:</p>
+<p><span class="math display">\[ odds(Diagnosis| X_1 = a+1, X_2 = b, X_3 = c, X_4 = d)\]</span> <span class="math display">\[= e^{\beta_1}odds(Diagnosis| X_1 = a, X_2 = b, X_3 = c, X_4 = d) \]</span></p>
+<p>We can interpret the above as for every 1 mm increase in the mean perimeter of the tumor ,the odds of it being malignant increases by a multiplicative factor of <span class="math inline">\(e^{\beta_1}\)</span> after adjusting for the mean texture, smoothness, and concavity.</p>
+<p>We will apply this line of thinking to a section later on as we discuss the results of our model</p>
+</section>
+<section id="k-means" class="level2">
+<h2 class="anchored" data-anchor-id="k-means">3. K-Means</h2>
+<p>K-means is an unsupervised learning algorithm that partitions the data into <span class="math inline">\(k\)</span> clusters. In unsupervised learning, we have a set of random variables <span class="math inline">\(X_1, \ldots, X_p\)</span>, each with <span class="math inline">\(n\)</span> observed values. But, there is no response variable <span class="math inline">\(Y\)</span>.</p>
+<p>In K-means, we choose an integer <span class="math inline">\(K\)</span>, which is the number of clusters, beforehand as a tuning parameter. Let <span class="math inline">\(C_1, \ldots, C_K\)</span> denote sets containing the indices of observations in each cluster.</p>
+<p>The cluster sets must satisfy:</p>
+<ol type="1">
+<li><span class="math inline">\(C_1 \cup C_2 \cup \ldots \cup C_K = \{1, \ldots, n\}\)</span> (each observation belongs to some cluster)</li>
+<li><span class="math inline">\(C_i \cap C_j = \emptyset\)</span> for all <span class="math inline">\(i \neq j\)</span> (no observation belongs to more than one cluster)</li>
+</ol>
+<p>K-means seeks to minimize the total within-cluster variation:</p>
+<p><span class="math display">\[\min_{C_1,\ldots,C_K} \sum_{k=1}^{K} W(C_k)\]</span></p>
+<p>where <span class="math inline">\(W(C_k)\)</span> is the within-cluster variation for cluster <span class="math inline">\(C_k\)</span>, commonly defined using Euclidean distance:</p>
+<p><span class="math display">\[W(C_k) = \frac{1}{|C_k|} \sum_{i,j \in C_k} \sum_{p=1}^{P} (x_{ip} - x_{jp})^2\]</span> where <span class="math inline">\(X_{ij}\)</span> denotes the <span class="math inline">\(i\)</span>th observation of predictor <span class="math inline">\(X_j\)</span>.</p>
+<p>The algorithm aims to find cluster assignments that make observations within each cluster as similar as possible (minimizing within-cluster variation). Each cluster is represented by its centroid (mean of all points in the cluster), and observations are assigned to the nearest centroid.</p>
+<p>In our breast cancer example, we’re clustering based on tumor characteristics (like <code>radius_mean</code> and <code>texture_mean</code>) to identify natural groupings that may correspond to malignant vs.&nbsp;benign tumors. We chose to have k=2 clusters as we are interested in differentiating between benign and malignant. The silhouette analysis in Figure 5 shows us that k=2 is the most optimal choice both, mathematically as well as for this given research question</p>
+<p>We used the MSE as our measure of error as one of the main goals in K-means is to minimize the within cluster variation which is equivalent to the mean standard error (when using Euclidean distance).</p>
+</section>
+</section>
+<section id="iii.-results" class="level1">
+<h1>III. Results</h1>
+<section id="cross-validation-1" class="level2">
+<h2 class="anchored" data-anchor-id="cross-validation-1">1. Cross-Validation</h2>
+<p>The table below displays evaluation metrics of cross-validation for our two models. As mentioned earlier, we used MAE as our error metric because it provides a fair and interpretable measure of error without disproportionately punishing large outliers, which makes it suitable for medical datasets such as this one, for breast cancer tumors.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>In-sample MAE</th>
+<th>10-fold CV MAE</th>
+<th>LOOCV MAE</th>
+<th>5-fold CV MAE</th>
+<th>8-fold CV MAE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>11.8729</td>
+<td>11.9542812</td>
+<td>11.95863</td>
+<td>11.9937511</td>
+<td>11.9305124</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>12.65028</td>
+<td>12.7211409</td>
+<td>12.73318</td>
+<td>12.7598652</td>
+<td>12.7120443</td>
+</tr>
+</tbody>
+</table>
+<p>For Model 1, it looks like the MAE is roughly similar for when it’s measured in-sample (11.873) versus when it’s tested on “new” data (each test fold held out). Model 2 also has roughly similar MAE for in-sample (12.605) versus CV data. It seems better to pick the first model.</p>
+<p>The CV errors seem to be fairly consistent between 10-fold, 5-fold, 8-fold and LOOCV. Although a slim difference, the 8-fold cross-validation measure provides the smallest CV error for both models.</p>
+</section>
+<section id="logistic-regression-1" class="level2">
+<h2 class="anchored" data-anchor-id="logistic-regression-1">2. Logistic Regression</h2>
+<p>According to our model (Figure 13), all of our variables have a positive correlation to the response variable, meaning the greater the value, the higher the chances that a tumor is malignant.</p>
+<p>Specifically, we have found that the odds of a tumor with a mean perimeter, mean standard deviation of gray-scale value of texture, mean variation in radius length, and mean severity of concave portions of the contour of the tumor of 0 is <span class="math inline">\(e^{\beta_0} = 8.244728*10^{-17}\)</span>, which is comparatively low.</p>
+<p>For every 1 mm increase in the mean perimeter of the tumor, the odds of it being malignant increases by a multiplicative factor of <span class="math inline">\(e^{\beta_1} = 1.207159\)</span> after adjusting for the mean texture, smoothness, and concativity.</p>
+<p>For every 1 pixel increase in the mean standard deviation of gray-scale values of texture of the tumor ,the odds of it being malignant increases by a multiplicative factor of <span class="math inline">\(e^{\beta_2} = 1.444111\)</span> after adjusting for mean perimeter, smoothness and concavity.</p>
+<p>For every 1 mm increase in the mean local variation in radius lengths of the tumor ,the odds of it being malignant increases by a multiplicative factor of a staggering <span class="math inline">\(e^{\beta_3} = 1.438568e*10^{46}\)</span> after adjusting for mean perimeter, texture, and concavity.</p>
+<p>For every 1 mm increase in the mean of severity of concave portions of the contour of the tumor ,the odds of it being malignant increases by a multiplicative factor of a whooping <span class="math inline">\(e^{\beta_4} = 6.329209 *10^7\)</span> after adjusting for mean perimeter, texture, and smoothness.</p>
+</section>
+<section id="k-means-1" class="level2">
+<h2 class="anchored" data-anchor-id="k-means-1">3. K-Means</h2>
+<p>In figure 8, the B cluster represents tumors with smaller mean radius and lower mean texture values. Therefore these are characteristics associated with breast mass tumors that are Benign. The M cluster represents tumors with larger mean radius and higher mean texture values. Therefore these are characteristics associated with breast mass tumors that are Malignant. The clustering we observed in figure 7 generally matches the clustering in figure 8 done via K-means on just <code>texture_mean</code> and <code>radius_mean</code> which had no info about whether tumours were benign or malignant.</p>
+</section>
+</section>
+<section id="appendix" class="level1">
+<h1>Appendix</h1>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  43.79   75.20   86.29   92.05  104.15  188.50 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 24.24982</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 28.95</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  diagnosis     n
+  &lt;chr&gt;     &lt;int&gt;
+1 B           356
+2 M           212</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  diagnosis     n
+  &lt;chr&gt;     &lt;int&gt;
+1 B           356
+2 M           212</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="test_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="test_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="test_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="test_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="test_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="test_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="test_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="test_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="test_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="test_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="test_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="test_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Figure 13:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:  glm(formula = diagnosis ~ perimeter_mean + texture_mean + smoothness_mean + 
+    concavity_mean, family = binomial)
+
+Coefficients:
+    (Intercept)   perimeter_mean     texture_mean  smoothness_mean  
+       -37.0344           0.1883           0.3675         106.2825  
+ concavity_mean  
+        17.9633  
+
+Degrees of Freedom: 567 Total (i.e. Null);  563 Residual
+Null Deviance:      750.5 
+Residual Deviance: 164.2    AIC: 174.2</code></pre>
+</div>
+</div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
