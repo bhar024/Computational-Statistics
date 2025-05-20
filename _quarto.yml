@@ -12,6 +12,8 @@ website:
         text: About Me
       - href: test.qmd
         text: STAT244SC Project
+      - href: messages.qmd
+        text: Thank You Professor Robinson
 
 format:
   html:
