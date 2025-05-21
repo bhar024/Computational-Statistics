@@ -1,4 +1,14 @@
 ---
-title: "STAT244SC"
+title: "STAT244SC: Computational Statistics"
 ---
 
+Welcome to my website for STAT-244SC Intermediate Topics in Statistics: Computational Statistics! This Spring 2025 course explored how computation has become an essential component of modern statistical methods. In this class, we learned how computational approaches enhance statistical analysis through simulation-based techniques rather than relying solely on traditional calculus-based methods. We covered several key topics including:
+
+- Linear regression
+- Logistic regression for analyzing categorical outcome data
+- Model evaluation approaches to assess performance
+- Variable subset selection algorithms for identifying optimal predictors
+- LASSO regularization for handling high-dimensional data
+- K-means clustering for unsupervised learning and pattern discovery
+
+All of our analyses were performed using R, giving us hands-on experience with coding these methods rather than just understanding them theoretically. The computational focus allowed us to tackle more complex statistical problems and gain insights that would be difficult to achieve through traditional approaches alone. The course emphasized practical research applications through our assignments and individual projects, where we applied these computational techniques to real-world data and research questions.

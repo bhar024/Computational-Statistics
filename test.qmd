@@ -1,5 +1,5 @@
 ---
-title: "STAT244SC Project"
+title: "Project: Machine Learning for Breast Cancer Classification"
 authors: "Bhargavi, Maimoona, Thu"
 format: html
 
